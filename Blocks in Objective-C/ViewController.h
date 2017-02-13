@@ -37,15 +37,5 @@
 
 @interface ViewController : UIViewController
 
-/*!
- Given an array of NSURLs, write all of them to console and
- report the number of URLs written.
- 
- @param listOfURLs An array containing a list of NSURLs.
- 
- @returns Number of NSURLs written to console.
- */
-- (NSUInteger)listURLs:(NSArray *)listOfURLs;
-
 @end
 

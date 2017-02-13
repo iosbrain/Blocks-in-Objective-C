@@ -47,6 +47,8 @@
 
 @property (atomic) NSUInteger counter;
 
+@property (atomic, strong) UIImage *image;
+
 @end
 
 @implementation ViewController
@@ -108,6 +110,96 @@
     // Dispose of any resources that can be recreated.
 }
 
+#pragma mark - Define blocks
+
+/*! 
+ Define a completion block TYPE for updating a UIImageView once an image downloads.
+*/
+typedef void (^ImageDownloadCompletionBlock) (BOOL success, NSString* message);
+
+#pragma mark - Concurrent, asynchronous image downloads
+
+/*!
+ Specify the completion handler/callback to be executed when finished downloading
+ each image in a set of very large images. We do the downloading
+ in the background (concurrently and asynchronously).
+*/
+- (void)prepareForAsyncImageDownloads
+{
+    // Define a completion block INSTANCE for updating a UIImageView once an image downloads.
+    ImageDownloadCompletionBlock completionBlock = ^(BOOL success, NSString* message)
+    {
+        if (success)
+        {
+            self.imageView.image = self.image;
+            self.progressView.progress = (float)self.counter / (float)self.listOfURLs.count;
+            
+            NSLog(@"%@", message);
+        }
+        else
+        {
+            self.imageView.image = nil;
+            NSLog(@"%@", message);
+        }
+    };
+    
+    // start download process; each download task will call back/communicate
+    // that it's finished by executing the completionBlock paramter
+    [self performAsyncImageDownloadsWithCompletionBlock:completionBlock];
+}
+
+/*!
+ Download a set of images specified by a list of URLs to those images. Spin each
+ image download task off asynchronously on a concurrent queue (i.e., in the 
+ background). When each image finishes downloading, call a block which updates
+ the user interface to display the latest image.
+ 
+ @param completionBlock A block to execute on the MAIN THREAD to update the UI with the latest image
+*/
+- (void)performAsyncImageDownloadsWithCompletionBlock:(ImageDownloadCompletionBlock)completionBlock
+{
+    
+    // go through the list of URLs specifiying addresses to images
+    // we want to download
+    for (NSString *stringURL in self.listOfURLs)
+    {
+        
+        // start the download for the current URL asynchronously and
+        // in the background
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^
+        { // Begin outer block
+
+            NSURL *url = [NSURL URLWithString:stringURL];
+            NSData *imageData = [NSData dataWithContentsOfURL:url];
+            self.image = [UIImage imageWithData:imageData];
+            self.counter++;
+
+            // jump back on the MAIN THREAD to update the UI
+            dispatch_async(dispatch_get_main_queue(), ^
+            { // Begin inner block
+                
+                // if an image was successfully downloaded...
+                if (self.image)
+                {
+                    // this BLOCK updates the UI
+                    NSString *successString = [NSString stringWithFormat:@"SUCCESS: Image downloaded successfully - %@.", [url absoluteString]];
+                    completionBlock(YES, successString);
+                }
+                else // image download failed
+                {
+                    // this BLOCK updates the UI
+                    NSString *errorString = [NSString stringWithFormat:@"ERROR: Image was NOT downloaded - %@.", [url absoluteString]];
+                    completionBlock(NO, errorString);
+                }
+                
+            }); // End inner block
+
+        }); // End outer block
+        
+    } // end for (NSString *stringURL in self.listOfURLs)
+
+} // end performAsyncImageDownloadsWithCompletionBlock
+
 #pragma mark - User interactions
 
 /*!
@@ -116,27 +208,8 @@
 */
 - (IBAction)startAsyncButtonTapped:(id)sender
 {
-    for (NSString *stringURL in self.listOfURLs)
-    {
-
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^
-        {
-
-            NSURL *url = [NSURL URLWithString:stringURL];
-            NSData *imageData = [NSData dataWithContentsOfURL:url];
-            UIImage *image = [UIImage imageWithData:imageData];
-            self.counter++;
-            
-            dispatch_async(dispatch_get_main_queue(), ^
-            {
-                NSLog(@"URL: %@", [url path]);
-                self.imageView.image = image;
-                self.progressView.progress = (float)self.counter / (float)self.listOfURLs.count;
-            });
-           
-        });
-        
-    }
+    
+    [self prepareForAsyncImageDownloads];
     
 } // end startAsyncButtonTapped
 
