@@ -110,7 +110,6 @@
 				TargetAttributes = {
 					BC6D20F01E3E5C490043D264 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = DEZ9GH9THT;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -273,7 +272,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = DEZ9GH9THT;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = "Blocks in Objective-C/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.yourDomainNameHere.Blocks-in-Objective-C";
@@ -285,7 +284,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = DEZ9GH9THT;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = "Blocks in Objective-C/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.yourDomainNameHere.Blocks-in-Objective-C";
