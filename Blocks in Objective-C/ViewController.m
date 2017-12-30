@@ -3,7 +3,7 @@
 //  Blocks in Objective-C
 //
 //  Created by Andrew Jaffee on 2/10/17.
-//
+//  Updated: 12/29/17 for iosbrain.com article.
 /*
  
  Copyright (c) 2017 Andrew L. Jaffee, microIT Infrastructure, LLC, and
