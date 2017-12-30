@@ -252,7 +252,9 @@ typedef void (^ImageDownloadCompletionBlock) (BOOL success, NSString* message);
 - (IBAction)pressButtonTapped:(id)sender
 {
     self.pressCounter++;
-    self.counterValueTextField.text = [NSString stringWithFormat:@"%li", (unsigned long)self.pressCounter];
+    // self.counterValueTextField.text = [NSString stringWithFormat:@"%li", (unsigned long)self.pressCounter];
+    // Drew 12/29/17: display counter as a double
+    self.counterValueTextField.text = [NSString stringWithFormat:@"%1.1f", (float)self.pressCounter];
 }
 
 @end
